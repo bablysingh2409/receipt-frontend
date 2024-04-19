@@ -93,7 +93,7 @@ function ReceiptForm() {
       formData.append("selectedDate", selectedDate); // Append selected date
       formData.append("selectedGST", selectedGST); // Append selected GST
       attachments.forEach((file) => formData.append("attachment", file));
-      const res = await axios.post("http://localhost:3000/request", formData, {
+      const res = await axios.post("https://receipt.setside.app/request", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
