@@ -114,12 +114,12 @@ function ReceiptForm() {
       formData.append("selectedDate", selectedDate); // Append selected date
       formData.append("selectedGST", selectedGST); // Append selected GST
       attachments.forEach((file) => formData.append("attachment", file));
-      const res = await axios.post("https://receipt.setside.app/request", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log("response of mail", res);
+      // const res = await axios.post("https://receipt.setside.app/request", formData, {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
+      // console.log("response of mail", res);
       setExpenditureType("");
       setAmount("");
       setAttachments([]);
