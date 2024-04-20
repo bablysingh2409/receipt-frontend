@@ -8,8 +8,9 @@ function ReceiptForm() {
   const [attachments, setAttachments] = useState([]);
   // const [currentDate, setCurrentDate] = useState("");
   const [selectedDate, setSelectedDate] = useState(getDefaultDate());
-  const [selectedGST, setSelectedGST] = useState("non-GST");
+  const [selectedGST, setSelectedGST] = useState("null");
   const [otherExpenditure, setOtherExpenditure] = useState("");
+  const [legalName,setLegalName]=useState("");
   const MAX_ATTACHMENT_SIZE_MB = 10;
   // const [attachmentWarning, setAttachmentWarning] = useState(false);
 
@@ -19,6 +20,12 @@ function ReceiptForm() {
   //   const formattedDate = today.toLocaleDateString("en-US", options);
   //   setCurrentDate(formattedDate);
   // }, []);
+
+  useEffect(()=>{
+    const profileData=JSON.parse(localStorage.getItem("profileData"));
+    console.log(profileData.defaultWorkspace.legalName);
+    setLegalName(profileData.defaultWorkspace.legalName)
+  },[])
 
   function getDefaultDate() {
     const today = new Date();
@@ -46,6 +53,20 @@ function ReceiptForm() {
 
   const handleGSTChange = (e) => {
     setSelectedGST(e.target.value);
+  };
+
+  const handleAttachmentClick = (file) => {
+    // Check if the file is a PDF
+    if (file.type === "application/pdf") {
+      // Open PDF file in a new tab
+      window.open(URL.createObjectURL(file));
+    } else {
+      // For other file types, you can implement different behavior
+      // For example, you can download the file or open it in a new tab
+      // depending on the file type.
+      // Here, we'll open non-PDF files in a new tab as well.
+      window.open(URL.createObjectURL(file));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -104,7 +125,7 @@ function ReceiptForm() {
       setAttachments([]);
       setOtherExpenditure("");
       setSelectedGST("non-GST");
-      toast.success("form submitted");
+      toast.success(" Expense form submitted");
       document.getElementById("attachment").value = "";
     } catch (err) {
       console.log("error", err);
@@ -133,16 +154,18 @@ function ReceiptForm() {
   // };
 
   return (
-    <div className=" sm:min-h-screen sm:flex sm:justify-center sm:items-center bg-gray-100 px-4 py-8 sm:px-0 ">
+    <div className=" sm:min-h-screen sm:flex sm:justify-center sm:items-center bg-gray-100 px-4 py-8 sm:px-0 sm:flex-col ">
+    <h1 className="text-center text-[#2067b3] text-3xl font-semibold p-2 sm:mb-2">Welcome {legalName?legalName:"" }</h1>
       <div className="bg-white shadow-md rounded px-8 py-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-4">Expense Form</h2>
+      {/* <h1 className="text-center text-[#2067b3] text-3xl font-semibold p-2">Welcome {legalName?legalName:"" }</h1> */}
+        <h2 className="text-xl font-bold text-center mb-4">Expense Form</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="selectedDate"
               className="block text-gray-700 text-sm font-bold mb-2"
             >
-              Date <span className="text-red-500 text-lg font-bold"> * </span>:
+              Expense Date <span className="text-red-500 text-lg font-bold"> * </span>:
             </label>
             <input
               type="date"
@@ -253,18 +276,16 @@ function ReceiptForm() {
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
             />
           </div>
-          {attachments.length > 0 && (
-            <div className="mb-4">
-              <p className="text-gray-700 text-sm font-bold mb-2">
-                Selected Files:
-              </p>
-              <ul>
-                {attachments.map((file, index) => (
-                  <li key={index}>{file.name}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {attachments.map((file, index) => (
+        <li key={index}>
+          <button
+            onClick={() => handleAttachmentClick(file)}
+            className="text-blue-500 hover:underline focus:outline-none"
+          >
+            {file.name}
+          </button>
+        </li>
+      ))}
           <button
             type="submit"
             className="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"

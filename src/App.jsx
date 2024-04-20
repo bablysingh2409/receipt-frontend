@@ -5,9 +5,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Navbar from './components/Navbar';
 import ReceiptHomePage from './components/ReceiptHomePage';
 import ReceiptForm from './components/ReceiptForm';
+import { useAuth } from './context/auth';
 
 
 function App() {
+  const { isLogin} = useAuth();
 
   const router=createBrowserRouter([
     {
@@ -16,14 +18,14 @@ function App() {
     },
     {
       path:'/nav',
-      element:<Navbar/>,
+      element:isLogin?<Navbar/>:<Home/>,
       children:[
         {
           path:'/nav/receipt-home-page',
-          element:<ReceiptHomePage/>
+          element:isLogin?<ReceiptHomePage/>:<Home/>
         },{
           path:'/nav/receipt-form',
-          element:<ReceiptForm/>
+          element:isLogin?<ReceiptForm/>:<Home/>
         }
       ]
     }

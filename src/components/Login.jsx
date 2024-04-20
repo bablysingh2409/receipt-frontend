@@ -2,7 +2,8 @@ import axios from "axios";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
+import { toast } from "react-toastify";
+import { useAuth } from "../context/auth";
 
 export default function Login() {
   const [isPhoneVerify, setIsPhoneVerify] = useState(false);
@@ -14,7 +15,7 @@ export default function Login() {
   const [isOTPSend, setIsOtpSend] = useState(false);
   const [otp, setOtp] = useState("");
   //   const BASE_URL = import.meta.env.VITE_BASE_URL;
-  //   const { setIsLogin } = useAuth();
+    const { setIsLogin } = useAuth();
 
   const handleOTPRequest = async () => {
     // e.preventDefault();
@@ -33,7 +34,7 @@ export default function Login() {
       }
     } catch (err) {
       console.error("Error occurred:", err);
-      //   toast(err.response.data.message);
+        toast(err.response.data.message);
     }
     // {
     //     "phone": "8240347308",
@@ -54,17 +55,27 @@ export default function Login() {
 
       if (res.status === 200) {
         console.log("login response", res);
-        // toast("login successfully");
-        // setIsLogin(true);
-        // localStorage.setItem("login", true);
+        toast("login successfully");
+        setIsLogin(true);
+        localStorage.setItem("login", true);
         localStorage.setItem("token", res.data?.data.token);
         navigate("/nav/receipt-home-page");
       }
     } catch (err) {
-      //   toast(err.response.data.message);
+        toast(err.response.data.message);
       console.log(err.response.message);
     }
   };
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      if (!isPhoneVerify) {
+        handleOTPRequest();
+      } else {
+        handleVerifyOTP();
+      }
+    }
+  };
+
 
   return (
     <>
@@ -92,6 +103,7 @@ export default function Login() {
                   }
                   placeholder="Enter Mobile Number"
                   className="sm:w-[296.494px] sm:h-[40.711px] rounded-md border border-[#D9D9D9] p-1"
+                  onKeyPress={handleKeyPress}
                 />
               </div>
               {isPhoneVerify && (
@@ -101,6 +113,7 @@ export default function Login() {
                   </label>
                   <input
                     type="number"
+                    onKeyPress={handleKeyPress}
                     onChange={(e) => setOtp(e.target.value)}
                     placeholder="# OTP"
                     className="sm:w-[296.494px] sm:h-[40.711px] rounded-md border border-[#D9D9D9] p-1
@@ -112,6 +125,7 @@ export default function Login() {
           </div>
           <button
             onClick={!isOTPSend ? handleOTPRequest : handleVerifyOTP}
+            onKeyPress={handleKeyPress}
             className="sm:w-[150px] sm:h-[40px] rounded-md bg-[#059f30] sm:text-[16px] font-bold text-white
             w-[100px] h-[35px] text-[14px] "
           >
